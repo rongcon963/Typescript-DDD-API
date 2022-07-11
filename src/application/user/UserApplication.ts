@@ -31,6 +31,10 @@ export class UserApplication {
     }
 
     async createUser({ email, firstname, lastname, username, password }: any): Promise<void> {
+
+        if (await this.userRepository.findUser( username )) {
+            throw 'Username "' + username + '" is already taken';
+        }
         // hash password
         if (password) {
             password = bcrypt.hashSync(password, 10);

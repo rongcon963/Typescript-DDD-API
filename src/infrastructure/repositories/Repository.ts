@@ -28,11 +28,6 @@ implements IRepository<TDomainEntity> {
     return this.dataMapper.toDomain(dbResult);
   }
 
-  async findOnebyUser(username: any): Promise<boolean> {
-    const dbResult = await this.collectionInstance.findOne({ username });
-    return !!dbResult;
-  }
-
   async findUser(username: string): Promise<TDomainEntity | null> {
     const dbResult = await this.collectionInstance.findOne({ username });
     if (!dbResult) return null;
@@ -46,15 +41,7 @@ implements IRepository<TDomainEntity> {
 
   async save(entity: TDomainEntity): Promise<void> {
     const guid = (entity as any).guid;
-    const username = (entity as any).username;
-    let password = (entity as any).password;
     const exists = await this.doesExists(guid);
-    const name = await this.findOnebyUser(username);
-
-    // Validate user exist
-    if(name) {
-      throw 'Username "' + username + '" is already taken';
-    }
     
     if (!exists) {
       await this.collectionInstance.insertOne(this.dataMapper.toDalEntity(entity));
