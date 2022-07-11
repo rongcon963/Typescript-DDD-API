@@ -9,9 +9,11 @@ export class UserDataMapper implements IDataMapper<User> {
       guid,
       email,
       firstname,
-      lastname
+      lastname,
+      username,
+      password
     } = user;
-    return User.create({ email, firstname, lastname }, guid);
+    return User.create({ email, firstname, lastname, username, password }, guid);
   }
 
   toDalEntity(userEntity: User) {
@@ -20,6 +22,8 @@ export class UserDataMapper implements IDataMapper<User> {
       email: userEntity.email,
       firstname: userEntity.firstname,
       lastname: userEntity.lastname,
+      username: userEntity.username,
+      password: userEntity.password
     };
   }
 }

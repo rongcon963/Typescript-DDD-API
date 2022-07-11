@@ -4,6 +4,7 @@ import { ApplicationError } from '../../core/ApplicationError';
 import { IUserRepository } from '../../domain/user/IUserRepository';
 import { UserDto } from './dtos/UserDto';
 import { User } from '../../domain/user/User';
+import * as bcrypt from 'bcrypt'; 
 
 @injectable()
 export class UserApplication {
@@ -24,8 +25,17 @@ export class UserApplication {
         return new UserDto(user.guid, user.email ,user.firstname, user.lastname);
     }
 
-    async createUser({ email, firstname, lastname }: any): Promise<void> {
-        const user = User.create({ email, firstname, lastname });
+    async authenticate({username, password}: any): Promise<void> {
+        const user = await this.userRepository.findUser( username );
+        
+    }
+
+    async createUser({ email, firstname, lastname, username, password }: any): Promise<void> {
+        // hash password
+        if (password) {
+            password = bcrypt.hashSync(password, 10);
+        }
+        const user = User.create({ email, firstname, lastname, username, password });
         await this.userRepository.save(user);
     }
 }

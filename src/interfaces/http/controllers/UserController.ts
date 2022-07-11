@@ -30,9 +30,17 @@ export class UserController {
     return res.json(ok(user, `Successfully retrieved a user with an ID of ${req.params.id}`));
   }
 
+  @httpPost('/login')
+  async login(@request() req: Request, @response() res: Response) {
+    const { body } = req;
+    const user = await this.service.authenticate(body);
+    return res.json(ok(user, `Successfully login a user with an ID of ${req}`));
+  }
+
   @httpPost('/')
   async createUser(@request() req: Request, @response() res: Response) {
     const { body } = req;
+    console.log(body);
     await this.service.createUser(body);
     return res.json({
       status: '000',
