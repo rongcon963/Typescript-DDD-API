@@ -32,15 +32,19 @@ export class UserController {
 
   @httpPost('/login')
   async login(@request() req: Request, @response() res: Response) {
-    const { body } = req;
-    const user = await this.service.authenticate(body);
-    return res.json(ok(user, `Successfully login a user with an ID of ${req}`));
+    const { username, password } = req.body;
+    console.log(req.body);
+    const user = await this.service.credentials({username, password});
+    if(!user) {
+      return res.status(401).send({error: 'Login failed! Check authentication credentials'});
+    }
+    const token = await this.service.authenticate({username, password});
+    return res.json(ok({user,token}, `Successfully login a user with an ID of ${username}`));
   }
 
   @httpPost('/')
   async createUser(@request() req: Request, @response() res: Response) {
     const { body } = req;
-    console.log(body);
     await this.service.createUser(body);
     return res.json({
       status: '000',
