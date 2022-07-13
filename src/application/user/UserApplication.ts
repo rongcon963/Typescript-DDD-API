@@ -58,4 +58,22 @@ export class UserApplication {
         const user = User.create({ email, firstname, lastname, username, password });
         await this.userRepository.save(user);
     }
+
+    async updateUserById(id: string,{ email, firstname, lastname, username, password }: any ): Promise<void> {
+        const user = await this.userRepository.findOneById(id);
+        if (!user) throw 'User not found';
+        
+        // hash password if it was entered
+        if (password) {
+            password = bcrypt.hashSync(password, 10);
+        }
+        // copy userParam properties to user
+        Object.assign(user, { email, firstname, lastname, username, password });
+
+        await this.userRepository.save(user);
+    }
+
+    async deleteUserById(id: string): Promise<void> {
+        await this.userRepository.delete(id);
+    }
 }

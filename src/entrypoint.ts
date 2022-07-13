@@ -8,6 +8,7 @@ import { Application as ExpressApplication } from 'express';
 
 import { applicationContainerModule } from './application/container';
 import { infrastructureContainerModule } from './infrastructure/container';
+import { jwt } from './interfaces/http/middlewares/auth';
 
 const initialise = async () => {
   const container = new Container();
@@ -24,6 +25,7 @@ const initialise = async () => {
       })
     );
     app.use(bodyParser.json());
+    app.use(jwt());
   });
 
   server.setErrorConfig((app: ExpressApplication) => {
