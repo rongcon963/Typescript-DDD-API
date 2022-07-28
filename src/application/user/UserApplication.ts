@@ -5,7 +5,9 @@ import { IUserRepository } from '../../domain/user/IUserRepository';
 import { UserDto } from './dtos/UserDto';
 import { User } from '../../domain/user/User';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken'; 
+import * as jwt from 'jsonwebtoken';
+import * as fs from "fs";
+import * as path from 'path';
 
 @injectable()
 export class UserApplication {
@@ -28,8 +30,9 @@ export class UserApplication {
 
     async authenticate({username, password}: any): Promise<any | null> {
         const user = await this.userRepository.findUser( username );
+        const privateKey = fs.readFileSync(path.join(__dirname, './../../../private.key'),'utf8');
         if (user && bcrypt.compareSync(password, user.password)) {
-            const token = jwt.sign({ sub: user.guid }, 'tuanpham', { expiresIn: '7d' });
+            const token = jwt.sign({ sub: user.guid }, privateKey, { algorithm: 'RS256', expiresIn: '7d' });
             return token;
         }
     }
