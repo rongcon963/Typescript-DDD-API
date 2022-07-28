@@ -12,6 +12,7 @@ import { inject } from 'inversify';
 import { TYPES } from '../../../constants/types';
 import { ok } from '../processors/response';
 import { UserApplication } from '../../../application/user/UserApplication';
+import {cacheMiddleware} from '../middlewares/cacheMiddleware';
 
 @controller('/api/v1/users')
 export class UserController {
@@ -20,7 +21,7 @@ export class UserController {
     private readonly service: UserApplication
   ) {}
 
-  @httpGet('/')
+  @httpGet('/', cacheMiddleware)
   async getAllUsers(@request() req: Request, @response() res: Response) {
     const books = await this.service.getAllUsers();
     return res.json(ok(books, 'Successfully retrieved all users'));
